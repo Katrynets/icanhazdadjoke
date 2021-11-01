@@ -1,0 +1,477 @@
+{
+	"info": {
+		"_postman_id": "b438fce0-24df-4cb3-bbe3-08660867dec1",
+		"name": "icanhazdadjoke",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Fetch a random dad joke",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"if (responseCode.code !== 200) {\r",
+							"    \r",
+							"    console.log('FAILED. The response body is: '+ responseBody);\r",
+							"    } else {\r",
+							"        pm.environment.set(\"joke_id\", jsonData.id);\r",
+							"        pm.environment.set(\"joke_text\", jsonData.joke);\r",
+							"}\r",
+							"\r",
+							"\r",
+							"pm.test(\"response should not be error\", function () { \r",
+							"    pm.response.to.not.be.error; \r",
+							"    pm.response.to.have.jsonBody;\r",
+							"    pm.response.to.not.have.jsonBody(\"error\");\r",
+							"    pm.response.to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response heeder \\\"Content-Type\\\" is equal \\\"application/json\\\"\", function () {\r",
+							"   pm.response.to.have.header(\"Content-Type\");\r",
+							"   pm.response.to.be.header(\"Content-Type\", \"application/json\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"if (pm.response.code === 200) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.test('Body matches property \"id\"', function() {\r",
+							"        pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Body property 'Id' should not be empty\", function () {\r",
+							"        pm.expect(jsonData.id).to.not.be.null;\r",
+							"    });\r",
+							"\r",
+							"    pm.test('Body matches property \"joke\"', function() {\r",
+							"        pm.expect(jsonData).to.have.property(\"joke\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test('Body property \"joke\" should not be empty', function() {\r",
+							"        pm.expect(jsonData.joke).to.not.be.empty;\r",
+							"    }); \r",
+							"\r",
+							"    pm.test('Body matches property \"status\"', function() {\r",
+							"        pm.expect(jsonData).to.have.property(\"status\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test('Body property \"status\" should be equal \"200\"', function() {\r",
+							"        pm.expect(jsonData.status).to.be.eql(200);\r",
+							"\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}",
+					"host": [
+						"{{baseUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch a dad joke by joke id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code name has string\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Compare the joke text\", function () {\r",
+							"    pm.expect(jsonData.joke).to.eql(pm.environment.get(\"joke_text\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/j/{{joke_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"j",
+						"{{joke_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch a random dad joke as text",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 2xx\", function () {\r",
+							"    pm.response.to.be.success;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.sendRequest({\r",
+							"    url: pm.environment.get(\"baseUrl\"),\r",
+							"    method: 'GET',\r",
+							"    header: {\r",
+							"        'Accept': 'application/json'\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    let JsonData = response.json();\r",
+							"    console.log(response.json())\r",
+							"    pm.environment.set(\"joke_id\", JsonData.id)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "text/plain",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/j/{{joke_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"j",
+						"{{joke_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch a random dad joke as a Slack message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\r",
+							"  \"type\": \"object\",\r",
+							"  \"properties\": {\r",
+							"    \"attachments\": {\r",
+							"      \"type\": \"array\",\r",
+							"      \"items\": [\r",
+							"        {\r",
+							"          \"type\": \"object\",\r",
+							"          \"properties\": {\r",
+							"            \"fallback\": {\r",
+							"              \"type\": \"string\"\r",
+							"            },\r",
+							"            \"footer\": {\r",
+							"              \"type\": \"string\"\r",
+							"            },\r",
+							"            \"text\": {\r",
+							"              \"type\": \"string\"\r",
+							"            }\r",
+							"          },\r",
+							"          \"required\": [\r",
+							"            \"fallback\",\r",
+							"            \"footer\",\r",
+							"            \"text\"\r",
+							"          ]\r",
+							"        }\r",
+							"      ]\r",
+							"    },\r",
+							"    \"response_type\": {\r",
+							"      \"type\": \"string\"\r",
+							"    },\r",
+							"    \"username\": {\r",
+							"      \"type\": \"string\"\r",
+							"    }\r",
+							"  },\r",
+							"  \"required\": [\r",
+							"    \"attachments\",\r",
+							"    \"response_type\",\r",
+							"    \"username\"\r",
+							"  ]\r",
+							"}\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test('Schema is valid', function () {\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/slack",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"slack"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch a dad joke as an image",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code text is \\\"OK\\\"\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 2xx\", function () {\r",
+							"    pm.response.to.be.success;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"response should not be error\", function () { \r",
+							"    pm.response.to.not.be.error; \r",
+							"    pm.response.to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response heeder \\\"Content-Type\\\" is equal \\\"image/png\\\"\", function () {\r",
+							"   pm.response.to.have.header(\"Content-Type\");\r",
+							"   pm.response.to.be.header(\"Content-Type\", \"image/png\");\r",
+							"});\r",
+							"\r",
+							"/*\r",
+							"if (pm.response.code === 200) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.test('Body matches property \"id\"', function() {\r",
+							"        pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    });\r",
+							"\r",
+							"\r",
+							"    pm.test('Body property \"id\" is equal \\\"pm.environment.get(\"joke_id\")\\\"\"\"', function() {\r",
+							"        pm.expect(jsonData).to.have.property(\"id\");\r",
+							"        pm.expect(jsonData.id).to.be.eq(pm.environment.get(\"joke_id\"));\r",
+							"    });\r",
+							"\r",
+							" pm.test('Body matches property \"joke\"', function() {\r",
+							"        pm.expect(jsonData).to.have.property(\"joke\");\r",
+							"    });\r",
+							"    pm.test(\"Body property 'joke' should not be empty\", function () {\r",
+							"        pm.expect(jsonData.joke).to.not.be.empty;\r",
+							"    });\r",
+							"\r",
+							"    pm.test('Body matches property \"status\"', function() {\r",
+							"        pm.expect(jsonData).to.have.property(\"status\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test('Body property \"status\" should be equal \"200\"', function() {\r",
+							"        pm.expect(jsonData.status).to.be.eql(200);\r",
+							"\r",
+							"    });\r",
+							"\r",
+							"}*/\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"joke_id\", \"R7UfaahVfFd\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/j/{{joke_id}}.png",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"j",
+						"{{joke_id}}.png"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search for dad jokes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"The \\\"term\\\" value is valid\", function () {\r",
+							"    pm.expect(jsonData.value).to.eql(pm.environment.get(\"term\"));\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let term = _.sample([\"developer\", \"dinosaur\", \"cats\", \"bar\"]);\r",
+							"\r",
+							"pm.environment.set(\"search_term\",term);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/search?page=1&limit=30&term={{search_term}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "30"
+						},
+						{
+							"key": "term",
+							"value": "{{search_term}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.environment.set(\"responseTime\", 200);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Response time is less than \" + pm.variables.get(\"responseTime\") + \"ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(pm.variables.get(\"responseTime\"));",
+					"});"
+				]
+			}
+		}
+	]
+}
