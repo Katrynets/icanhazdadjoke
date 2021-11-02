@@ -458,7 +458,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"pm.environment.set(\"responseTime\", 200);"
+					"pm.environment.set(\"responseTime\", 500);"
 				]
 			}
 		},
